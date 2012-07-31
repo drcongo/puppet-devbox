@@ -1,0 +1,15 @@
+[user]
+    name = __NAME__
+    email = __EMAIL__
+[alias]
+    ci = commit
+    co = checkout
+    br = branch
+    st = !sh -c 'echo "" && git diff --stat && echo "" && git status && echo ""'
+    lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset' --abbrev-commit --date=relative
+[merge]
+    ff = false
+[color]
+    ui = true
+[core]
+    excludesfile = /home/vagrant/.gitconfig

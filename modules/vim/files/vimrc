@@ -1,0 +1,94 @@
+" .vimrc file
+
+" Enable filetype plugin
+filetype plugin on
+filetype indent on
+
+" Sets how many lines of history VIM has to remember
+set history=512
+
+" Enable line numbers
+set number
+
+" Disable wrapping
+set nowrap
+
+" Dark background
+set background=dark
+
+" Use spaces instead of tabs
+set tabstop=4
+set shiftwidth=4
+set expandtab
+
+" Search
+set incsearch
+set hlsearch
+
+" Show matches
+set showmatch
+
+" Backspace
+set backspace=2
+
+" Status line
+set laststatus=2
+if has('statusline')
+    " Status line detail:
+    " %f file path
+    " %y file type between braces (if defined)
+    " %([%R%M]%) read-only, modified and modifiable flags between braces
+    " %{'!'[&ff=='default_file_format']}
+    " shows a '!' if the file format is not the platform
+    " default
+    " %{'$'[!&list]} shows a '*' if in list mode
+    " %{'~'[&pm=='']} shows a '~' if in patchmode
+    " (%{synIDattr(synID(line('.'),col('.'),0),'name')})
+    " only for debug : display the current syntax item name
+    " %= right-align following items
+    " #%n buffer number
+    " %l/%L,%c%V line number, total number of lines, and column number
+    function SetStatusLineStyle()
+        if &stl == '' || &stl =~ 'synID'
+            let &stl="%f %y%([%R%M]%)%{'!'[&ff=='".&ff."']}%{'$'[!&list]}%{'~'[&pm=='']}%=#%n %l/%L,%c%V "
+        else
+            let &stl="%f %y%([%R%M]%)%{'!'[&ff=='".&ff."']}%{'$'[!&list]} (%{synIDattr(synID(line('.'),col('.'),0),'name')})%=#%n %l/%L,%c%V "
+        endif
+    endfunc
+
+    " Switch between the normal and vim-debug modes in the status line
+    nmap _ds :call SetStatusLineStyle()<CR>
+    call SetStatusLineStyle()
+
+    " Window title
+    if has('title')
+        set titlestring=%t%(\ [%R%M]%)
+    endif
+endif
+
+" Status line coloring
+hi StatusLine ctermfg=4 ctermbg=0
+if version >= 700
+    au InsertEnter * hi StatusLine term=reverse ctermfg=1 ctermbg=7
+    au InsertLeave * hi StatusLine term=reverse ctermfg=4 ctermbg=0
+endif
+
+" Autocomplete
+autocmd FileType python set omnifunc=pythoncomplete#Complete
+autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
+autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
+autocmd FileType css set omnifunc=csscomplete#CompleteCSS
+autocmd FileType xml set omnifunc=xmlcomplete#CompleteTags
+autocmd FileType php set omnifunc=phpcomplete#CompletePHP
+autocmd FileType c set omnifunc=ccomplete#Complete
+
+" Syntax highlighting
+syntax enable
+autocmd FileType php let php_sql_query=1 " highlights interpolated variables in sql strings
+autocmd FileType php let php_htmlInStrings=1 " highlights html inside of php strings
+autocmd FileType php let php_noShortTags=1 " discourages use of short tags
+autocmd FileType php let php_folding=1 " automagically folds functions & methods
+
+" Highlight matching brackets
+autocmd FileType php DoMatchParen
+autocmd FileType php hi MatchParen ctermbg=blue guibg=lightblue
