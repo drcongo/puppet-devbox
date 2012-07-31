@@ -1,7 +1,7 @@
 Devbox Puppet Config
 ====================
 
-These puppet configuration files can be used in combination with Vagrant to setup and provision a development box.
+This is my personal puppet configuration which I use with vagrant to setup my development box.
 
 It installs the following:
 * PHP 5.4
