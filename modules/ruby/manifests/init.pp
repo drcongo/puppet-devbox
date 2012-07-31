@@ -8,7 +8,7 @@ class ruby {
     # Install some useful gems
     exec { "gem.capistrano":
         command => "gem install capistrano",
-        require => Exec['ruby1.9.1']
+        require => Package['ruby1.9.1']
     }
     exec { "gem.compass":
         command => "gem install compass",
