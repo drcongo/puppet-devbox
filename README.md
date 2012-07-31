@@ -13,6 +13,8 @@ It installs the following:
 * Various php dev tools (phpunit, phing, phpmyadmin, etc)
 * Vim
 * ZSH and oh-my-zsh (default shell)
+* capistrano
+* compass
 
 It has been tested with a Ubuntu precise64 box.
 
@@ -22,8 +24,8 @@ Requirements
 * Puppet
 * Vagrant
 
-Installation
-------------
+Usage
+-----
 
 Create a Vagrantfile in the root of your project with the following contents:
 
@@ -33,18 +35,16 @@ Vagrant::Config.run do |config|
     config.vm.network :hostonly, "33.33.33.10"
     config.vm.provision :puppet do |puppet|
         puppet.manifests_path = "puppet/manifests"
-        puppet.module_path = "puppet/modules"
         puppet.manifest_file  = "site.pp"
         puppet.options = "--verbose"
     end
 end
 ```
 
-Create a puppet directory that will hold your modules and manifests, and link the modules directory to whereever you keep your modules.
+Create a puppet directory that will hold your manifests.
 
 ```
 $ mkdir -p puppet/manifests
-$ ln -s /path/to/your/modules puppet/modules
 ```
 
 Now create a the ```puppet/manifests/site.pp``` file with the following:
@@ -60,9 +60,6 @@ Run vagrant up to start downloading (if the box hasn't been downloaded yet) and 
 ```
 vagrant up
 ```
-
-Usage
------
 
 Now you can run ```vagrant ssh``` to login to your box.
 
