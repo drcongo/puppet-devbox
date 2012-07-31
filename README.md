@@ -35,6 +35,7 @@ Vagrant::Config.run do |config|
     config.vm.network :hostonly, "33.33.33.10"
     config.vm.provision :puppet do |puppet|
         puppet.manifests_path = "puppet/manifests"
+        puppet.module_path = "puppet/modules"
         puppet.manifest_file  = "site.pp"
         puppet.options = "--verbose"
     end
