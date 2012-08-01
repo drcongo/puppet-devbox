@@ -12,4 +12,4 @@
 [color]
     ui = true
 [core]
-    excludesfile = /home/vagrant/.gitconfig
+    excludesfile = /home/vagrant/.gitignore
