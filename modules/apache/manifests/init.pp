@@ -11,7 +11,6 @@ class apache ($hostname) {
         ensure => running,
         require => Package["apache2"],
         subscribe => [
-            File["/etc/apache2/httpd.conf"],
             File["/etc/apache2/mods-enabled/rewrite.load"],
             File["/etc/apache2/sites-enabled/010-project"]
         ]
@@ -36,7 +35,8 @@ class apache ($hostname) {
     exec { "apache.hostname":
         command => "echo \"ServerName localhost\" >> /etc/apache2/httpd.conf",
         unless => "grep ServerName /etc/apache2/httpd.conf",
-        require => File['/etc/apache2/sites-enabled/010-project']
+        require => Package['apache2'],
+        notify  => Service["apache2"]
     }
     exec { "apache.project.hostname":
         command => "sed -i 's/ServerName __HOSTNAME__/ServerName $hostname/' /etc/apache2/sites-enabled/010-project",
