@@ -11,6 +11,7 @@ class apache ($hostname) {
         ensure => running,
         require => Package["apache2"],
         subscribe => [
+            File["/etc/apache2/httpd.conf"],
             File["/etc/apache2/mods-enabled/rewrite.load"],
             File["/etc/apache2/sites-enabled/010-project"]
         ]
@@ -27,11 +28,17 @@ class apache ($hostname) {
     file { "/etc/apache2/sites-enabled/010-project":
         ensure => present,
         source => "puppet:///modules/apache/project_vhost.conf",
+        replace => false,
         require => Package['apache2'],
     }
 
     # Set the hostname
     exec { "apache.hostname":
+        command => "echo \"ServerName localhost\" >> /etc/apache2/httpd.conf",
+        unless => "grep ServerName /etc/apache2/httpd.conf",
+        require => File['/etc/apache2/sites-enabled/010-project']
+    }
+    exec { "apache.project.hostname":
         command => "sed -i 's/ServerName __HOSTNAME__/ServerName $hostname/' /etc/apache2/sites-enabled/010-project",
         require => File['/etc/apache2/sites-enabled/010-project']
     }
