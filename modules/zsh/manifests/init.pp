@@ -21,45 +21,14 @@ class zsh {
         require => [Package['git-core'], Package['zsh'], Package['curl']]
     }
 
-    # Copy zshrc
-    exec { 'copy-zshrc':
-        cwd     => "/home/vagrant",
-        user    => "vagrant",
-        command => 'cp .oh-my-zsh/templates/zshrc.zsh-template .zshrc',
-        unless  => 'ls .zshrc',
-        require => Exec['clone oh-my-zsh'],
-    }
-
-    # Change zshrc
-    exec { "omz.theme":
-        user    => "vagrant",
-        command => "sed -i 's/ZSH_THEME=\".*\"/ZSH_THEME=\"sunrise\"/' /home/vagrant/.zshrc",
-        unless => 'grep "ZSH_THEME=\"sunrise\"" /home/vagrant/.zshrc',
-        require => Exec['copy-zshrc']
-    }
-    exec { "omz.plugins":
-        user    => "vagrant",
-        command => "sed -i 's/plugins=(.*)/plugins=(git svn symfony2 cap)/' /home/vagrant/.zshrc",
-        unless => 'grep "plugins=(git svn symfony2 cap)" /home/vagrant/.zshrc',
-        require => Exec['copy-zshrc']
-    }
-    exec { "env.lang":
-        user    => "vagrant",
-        command => 'echo "LANG=\"en_US.UTF-8\"" >> /home/vagrant/.zshrc',
-        unless => "grep LANG /home/vagrant/.zshrc 2>/dev/null",
-        require => Exec['copy-zshrc']
-    }
-    exec { "env.editor":
-        user    => "vagrant",
-        command => 'echo "EDITOR=\"vim\"" >> /home/vagrant/.zshrc',
-        unless => "grep EDITOR /home/vagrant/.zshrc 2>/dev/null",
-        require => Exec['copy-zshrc']
-    }
-    exec { "env.symfony-assets-install":
-        user    => "vagrant",
-        command => 'echo "SYMFONY_ASSETS_INSTALL=\"symlink\"" >> /home/vagrant/.zshrc',
-        unless => "grep SYMFONY_ASSETS_INSTALL /home/vagrant/.zshrc 2>/dev/null",
-        require => Exec['copy-zshrc']
+    # Set configuration
+    file { "/home/vagrant/.zshrc":
+        ensure => file,
+        owner => "vagrant",
+        group => "vagrant",
+        replace => false,
+        source => "puppet:///modules/zsh/zshrc",
+        require => Exec['clone oh-my-zsh']
     }
 
     # Set the shell
