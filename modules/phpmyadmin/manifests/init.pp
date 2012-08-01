@@ -1,29 +1,39 @@
 class phpmyadmin {
+    # Ensure we have wget and unzip
+    package { "wget":
+        ensure => "latest"
+    }
+    package { "unzip":
+        ensure => "latest"
+    }
+
     # Download phpmyadmin
     exec { "phpmyadmin.download":
         command => "wget https://github.com/phpmyadmin/phpmyadmin/zipball/STABLE -O /tmp/phpmyadmin.zip",
         creates => "/tmp/phpmyadmin.zip",
+        unless => "ls /var/www/phpmyadmin",
         require => Package["wget"]
     }
 
     # Unzip phpmyadmin
-    exec { "phpmyadmin.exctract":
+    exec { "phpmyadmin.extract":
         command => "unzip /tmp/phpmyadmin.zip -d /tmp/phpmyadmin",
         creates => "/tmp/phpmyadmin",
-        require => File["/tmp/phpmyadmin.zip"]
+        unless => "ls /var/www/phpmyadmin",
+        require => [Package['unzip'], Exec["phpmyadmin.download"]]
     }
 
     # Move phpmyadmin into place
     exec { "phpmyadmin.move":
         command => "mv /tmp/phpmyadmin/* /var/www/phpmyadmin",
         creates => "/var/www/phpmyadmin",
-        require => File["/tmp/phpmyadmin"]
+        unless => "ls /var/www/phpmyadmin",
+        require => Exec["phpmyadmin.extract"]
     }
 
     # Set configuration
-    exec { "phpmyadmin.config":
-        command => "cp /var/www/phpmyadmin/config.sample.inc.php /var/www/phpmyadmin/config.inc.php",
-        creates => "/var/www/phpmyadmin/config.inc.php",
-        require => File["/var/www/phpmyadmin"]
+    file { "/var/www/phpmyadmin/config.inc.php":
+        source => "/var/www/phpmyadmin/config.sample.inc.php",
+        require => Exec["phpmyadmin.move"]
     }
 }
