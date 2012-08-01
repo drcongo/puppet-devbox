@@ -44,16 +44,19 @@ class zsh {
     exec { "env.lang":
         user    => "vagrant",
         command => 'echo "LANG=\"en_US.UTF-8\"" >> /home/vagrant/.zshrc',
+        unless => "grep LANG /home/vagrant/.zshrc 2>/dev/null",
         require => Exec['copy-zshrc']
     }
     exec { "env.editor":
         user    => "vagrant",
         command => 'echo "EDITOR=\"vim\"" >> /home/vagrant/.zshrc',
+        unless => "grep EDITOR /home/vagrant/.zshrc 2>/dev/null",
         require => Exec['copy-zshrc']
     }
     exec { "env.symfony-assets-install":
         user    => "vagrant",
         command => 'echo "SYMFONY_ASSETS_INSTALL=\"symlink\"" >> /home/vagrant/.zshrc',
+        unless => "grep SYMFONY_ASSETS_INSTALL /home/vagrant/.zshrc 2>/dev/null",
         require => Exec['copy-zshrc']
     }
 

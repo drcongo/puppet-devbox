@@ -37,8 +37,8 @@ class apache ($hostname) {
     }
 
     # Remove the default index file
-    exec { "apache.remove.default.index":
-        command => "rm /var/www/index.html",
+    file { "apache.remove.default.index":
+        ensure => absent,
         require => Package['apache2']
     }
 }
