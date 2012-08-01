@@ -29,6 +29,7 @@ class git ($gitUser, $gitEmail) {
     # Set ignores
     file { "/home/vagrant/.gitignore":
         ensure => file,
+        replace => false,
         owner => "vagrant",
         group => "vagrant",
         source => "puppet:///modules/git/gitignore"
