@@ -40,6 +40,7 @@ class apache ($hostname) {
     }
     exec { "apache.project.hostname":
         command => "sed -i 's/ServerName __HOSTNAME__/ServerName $hostname/' /etc/apache2/sites-enabled/010-project",
+        onlyif => "grep \"ServerName __HOSTNAME__\" /etc/apache2/sites-enabled/010-project",
         require => File['/etc/apache2/sites-enabled/010-project']
     }
 

@@ -34,11 +34,13 @@ class zsh {
     exec { "omz.theme":
         user    => "vagrant",
         command => "sed -i 's/ZSH_THEME=\".*\"/ZSH_THEME=\"sunrise\"/' /home/vagrant/.zshrc",
+        unless => 'grep "ZSH_THEME=\"sunrise\"" /home/vagrant/.zshrc',
         require => Exec['copy-zshrc']
     }
     exec { "omz.plugins":
         user    => "vagrant",
         command => "sed -i 's/plugins=(.*)/plugins=(git svn symfony2 cap)/' /home/vagrant/.zshrc",
+        unless => 'grep "plugins=(git svn symfony2 cap)" /home/vagrant/.zshrc',
         require => Exec['copy-zshrc']
     }
     exec { "env.lang":

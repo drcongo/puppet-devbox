@@ -5,6 +5,12 @@ class ruby {
         require => Exec['apt-get update']
     }
 
+    # Update gems
+    exec { "gem update":
+        command => "gem update",
+        require => Package['ruby1.9.1'],
+    }
+
     # Install some useful gems
     exec { "gem.capistrano":
         command => "gem install capistrano",
