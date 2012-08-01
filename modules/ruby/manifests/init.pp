@@ -13,7 +13,7 @@ class ruby {
     }
     exec { "gem.compass":
         command => "gem install compass",
-        unless => "gem list | grep compass 2>/dev/null"
+        unless => "gem list | grep compass 2>/dev/null",
         require => Package['ruby1.9.1']
     }
 }
