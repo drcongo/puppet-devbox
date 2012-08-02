@@ -7,6 +7,7 @@ class devbox ($hostname, $gitUser, $gitEmail) {
 
     include bootstrap
     include mysql
+    include memcached
     include php
     include ruby
 
