@@ -21,6 +21,24 @@ class php {
         notify => Service["apache2"]
     }
 
+    # Install image magick extension. Upstream has problems, so we have to install
+    # the package manually.
+    package { "imagemagick":
+        ensure => latest,
+        require => Exec['apt-get update'],
+    }
+    exec { "php.imagick.download":
+        command => "wget https://launchpad.net/~ondrej/+archive/php5/+files/php5-imagick_3.1.0%7Erc1-1%7Eprecise%2B1_amd64.deb -O /tmp/php5-imagick.deb",
+        creates => "/tmp/php5-imagick.deb",
+        unless => "dpkg -l php5-imagick | grep ii"
+    }
+    exec { "php.imagick.install":
+        command => "dpkg -i /tmp/php5-imagick.deb",
+        unless => "dpkg -l php5-imagick | grep ii",
+        require => Exec["php.imagick.download"],
+        notify => Service["apache2"]
+    }
+
     # Install various PEAR packages
     exec { "pear upgrade":
         command => "pear upgrade",

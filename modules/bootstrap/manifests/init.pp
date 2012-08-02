@@ -45,4 +45,12 @@ class bootstrap {
     exec { "apt-get update":
         command => "apt-get update",
     }
+
+    # Common packages
+    package { "wget":
+        ensure => "latest"
+    }
+    package { "unzip":
+        ensure => "latest"
+    }
 }

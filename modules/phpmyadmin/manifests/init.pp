@@ -1,12 +1,4 @@
 class phpmyadmin {
-    # Ensure we have wget and unzip
-    package { "wget":
-        ensure => "latest"
-    }
-    package { "unzip":
-        ensure => "latest"
-    }
-
     # Download phpmyadmin
     exec { "phpmyadmin.download":
         command => "wget https://github.com/phpmyadmin/phpmyadmin/zipball/STABLE -O /tmp/phpmyadmin.zip",
