@@ -1,6 +1,6 @@
 class php {
     # Install PHP packages
-    $phpPackages = ["php5", "php5-cli", "php5-mysql", "php-pear", "php5-dev", "php-apc", "php5-mcrypt", "php5-gd", "php5-sqlite", "php5-intl", "php5-xdebug", "php5-memcache"]
+    $phpPackages = ["php5", "php5-cli", "php5-mysql", "php-pear", "php5-dev", "php-apc", "php5-mcrypt", "php5-gd", "php5-sqlite", "php5-curl", "php5-intl", "php5-xdebug", "php5-memcache"]
     package { $phpPackages:
         ensure => latest,
         require => [Exec['apt-get update'], Package['apache2']],
@@ -64,6 +64,24 @@ class php {
     # Add a phpinfo file to www root
     file { "/var/www/phpinfo.php":
         content => "<?php phpinfo();",
+        require => Package['apache2']
+    }
+
+    # Add the fake sendmail script
+    file { "/usr/local/bin/fake-sendmail":
+        ensure => file,
+        owner => "root",
+        group => "root",
+        mode => "755",
+        source => "puppet:///modules/php/fake-sendmail"
+    }
+
+    # Ensure the mail dump dir exists and is writable
+    file { "/var/www/maildump":
+        ensure => "directory",
+        owner => "www-data",
+        group => "www-data",
+        mode => "777",
         require => Package['apache2']
     }
 }

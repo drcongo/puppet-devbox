@@ -1,0 +1,7 @@
+#!/usr/bin/php
+<?php
+
+$path = '/var/www/maildump';
+$filename = date('Y-m-d H:i:s ') . microtime(true) . '.txt';
+$contents = file_get_contents("php://stdin", "r");
+file_put_contents($path . '/' . $filename, $contents);
