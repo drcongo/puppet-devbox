@@ -47,10 +47,9 @@ class bootstrap {
     }
 
     # Common packages
-    package { "wget":
-        ensure => "latest"
-    }
-    package { "unzip":
-        ensure => "latest"
+    $commonPackages = ["wget", "unzip"]
+    package { $commonPackages:
+        ensure => latest,
+        require => Exec['apt-get update'],
     }
 }
