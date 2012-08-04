@@ -35,8 +35,71 @@ class php {
     exec { "php.imagick.install":
         command => "dpkg -i /tmp/php5-imagick.deb",
         unless => "dpkg -l php5-imagick | grep ii",
-        require => Exec["php.imagick.download"],
+        require => [Package['imagemagick'], Exec["php.imagick.download"]],
         notify => Service["apache2"]
+    }
+
+    # Install xhprof. PECL version doesn't run with PHP 5.4, so we have
+    # to compile and install manually.
+    exec { "php.xhprof.download":
+        command => "git clone --depth 1 git://github.com/preinheimer/xhprof.git",
+        cwd => "/var/www",
+        creates => "/var/www/xhprof",
+        unless => "ls /var/www/xhprof",
+        require => Package['git'],
+    }
+    exec { "php.xhprof.phpize":
+        command => "phpize",
+        cwd => "/var/www/xhprof/extension",
+        unless => "php -m | grep xhprof",
+        require => [Package['php5-dev'], Exec["php.xhprof.download"]]
+    }
+    exec { "php.xhprof.configure":
+        command => "sh ./configure",
+        cwd => "/var/www/xhprof/extension",
+        unless => "php -m | grep xhprof",
+        require => Exec["php.xhprof.phpize"]
+    }
+    exec { "php.xhprof.make":
+        command => "make",
+        cwd => "/var/www/xhprof/extension",
+        unless => "php -m | grep xhprof",
+        require => [Package['make'], Exec["php.xhprof.configure"]]
+    }
+    exec { "php.xhprof.make.install":
+        command => "make install",
+        cwd => "/var/www/xhprof/extension",
+        creates => "/usr/lib/php5/20100525/xhprof.so",
+        unless => "php -m | grep xhprof",
+        require => [Package['make'], Exec["php.xhprof.make"]]
+    }
+    file { "/etc/php5/conf.d/xhprof.ini":
+        content => "extension=xhprof.so",
+        require => Exec["php.xhprof.make.install"],
+        notify => Service['apache2']
+    }
+
+    # Setup xhprof web UI
+    file { "/var/www/xhprof/xhprof_lib/config.php":
+        ensure => file,
+        source => "/var/www/xhprof/xhprof_lib/config.sample.php",
+        replace => false,
+        require => Exec["php.xhprof.download"]
+    }
+    exec { "xhprof.web.dbpass":
+        command => "sed -i 's/['dbpass'] = 'password'/['dbpass'] = 'root'/' /var/www/xhprof/xhprof_lib/config.php",
+        onlyif => "grep \"['dbpass'] = 'password'\" /var/www/xhprof/xhprof_lib/config.php",
+        require => File['/var/www/xhprof/xhprof_lib/config.php']
+    }
+    exec { "xhprof.web.serializer":
+        command => "sed -i 's/['serializer'] = 'php'/['serializer'] = 'json'/' /var/www/xhprof/xhprof_lib/config.php",
+        onlyif => "grep \"['serializer'] = 'php'\" /var/www/xhprof/xhprof_lib/config.php",
+        require => File['/var/www/xhprof/xhprof_lib/config.php']
+    }
+    exec { "xhprof.web.database":
+        command => 'mysql -uroot -proot -e "create database xhprof; use xhprof; CREATE TABLE \`details\` (\`id\` char(17) NOT NULL, \`url\` varchar(255) default NULL, \`c_url\` varchar(255) default NULL, \`timestamp\` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, \`server name\` varchar(64) default NULL, \`perfdata\` MEDIUMBLOB, \`type\` tinyint(4) default NULL, \`cookie\` BLOB, \`post\` BLOB, \`get\` BLOB, \`pmu\` int(11) unsigned default NULL, \`wt\` int(11) unsigned default NULL, \`cpu\` int(11) unsigned default NULL, \`server_id\` char(3) NOT NULL default \'t11\', \`aggregateCalls_include\` varchar(255) DEFAULT NULL, PRIMARY KEY  (\`id\`), KEY \`url\` (\`url\`), KEY \`c_url\` (\`c_url\`), KEY \`cpu\` (\`cpu\`), KEY \`wt\` (\`wt\`), KEY \`pmu\` (\`pmu\`), KEY \`timestamp\` (\`timestamp\`)) ENGINE=MyISAM DEFAULT CHARSET=utf8;"',
+        unless => 'mysql -uroot -proot xhprof -e "exit"',
+        require => Service['mysql']
     }
 
     # Install various PEAR packages
