@@ -47,7 +47,7 @@ class bootstrap {
     }
 
     # Common packages
-    $commonPackages = ["wget", "unzip", "make", "graphviz"]
+    $commonPackages = ["curl", "wget", "unzip", "make", "graphviz"]
     package { $commonPackages:
         ensure => latest,
         require => Exec['apt-get update'],

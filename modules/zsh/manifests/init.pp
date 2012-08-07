@@ -2,14 +2,7 @@ class zsh {
     # Install ZSH
     package { 'zsh':
         ensure => latest,
-    }
-
-    # Install packages required for oh-my-zsh
-    package { 'curl':
-        ensure => latest,
-    }
-    package { 'git-core':
-        ensure => latest,
+        require => Exec['apt-get update']
     }
 
     # Clone oh-my-zsh
@@ -18,7 +11,7 @@ class zsh {
         user    => "vagrant",
         command => "git clone http://github.com/breidh/oh-my-zsh.git /home/vagrant/.oh-my-zsh",
         creates => "/home/vagrant/.oh-my-zsh",
-        require => [Package['git-core'], Package['zsh'], Package['curl']]
+        require => [Package['git'], Package['zsh'], Package['curl']]
     }
 
     # Set configuration
