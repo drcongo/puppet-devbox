@@ -20,7 +20,7 @@ class phpmyadmin {
         command => "mv /tmp/phpmyadmin/* /var/www/phpmyadmin",
         creates => "/var/www/phpmyadmin",
         unless => "ls /var/www/phpmyadmin",
-        require => Exec["phpmyadmin.extract"]
+        require => [Package['apache2'], Exec["phpmyadmin.extract"]]
     }
 
     # Set configuration
