@@ -11,14 +11,16 @@ class php {
         ensure => file,
         owner => "root",
         group => "root",
-        source => "puppet:///modules/php/php.ini"
+        source => "puppet:///modules/php/php.ini",
+        require => Package['php5-cli'],
     }
     file { "/etc/php5/apache2filter/php.ini":
         ensure => file,
         owner => "root",
         group => "root",
         source => "puppet:///modules/php/php.ini",
-        notify => Service["apache2"]
+        notify => Service["apache2"],
+        require => Package['php5']
     }
 
     # Install image magick extension. Upstream has problems, so we have to install
