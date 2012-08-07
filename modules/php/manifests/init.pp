@@ -32,7 +32,8 @@ class php {
     exec { "php.imagick.download":
         command => "wget https://launchpad.net/~ondrej/+archive/php5/+files/php5-imagick_3.1.0%7Erc1-1%7Eprecise%2B1_amd64.deb -O /tmp/php5-imagick.deb",
         creates => "/tmp/php5-imagick.deb",
-        unless => "dpkg -l php5-imagick | grep ii"
+        unless => "dpkg -l php5-imagick | grep ii",
+        require => Package['php5']
     }
     exec { "php.imagick.install":
         command => "dpkg -i /tmp/php5-imagick.deb",

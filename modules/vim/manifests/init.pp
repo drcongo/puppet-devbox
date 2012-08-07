@@ -2,6 +2,7 @@ class vim {
     # Install vim
     package { 'vim':
         ensure => latest,
+        require => Exec['apt-get update']
     }
 
     # Set the configuration
