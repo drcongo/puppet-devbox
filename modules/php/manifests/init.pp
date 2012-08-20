@@ -11,14 +11,14 @@ class php {
         ensure => file,
         owner => "root",
         group => "root",
-        source => "puppet:///modules/php/php.ini",
+        source => "puppet:///modules/php/php-cli.ini",
         require => Package['php5-cli'],
     }
     file { "/etc/php5/apache2filter/php.ini":
         ensure => file,
         owner => "root",
         group => "root",
-        source => "puppet:///modules/php/php.ini",
+        source => "puppet:///modules/php/php-web.ini",
         notify => Service["apache2"],
         require => Package['php5']
     }
@@ -85,24 +85,27 @@ class php {
     # Setup xhprof web UI
     file { "/var/www/xhprof/xhprof_lib/config.php":
         ensure => file,
-        source => "/var/www/xhprof/xhprof_lib/config.sample.php",
+        source => "puppet:///modules/php/xhprof-config.php",
         replace => false,
         require => Exec["php.xhprof.download"]
-    }
-    exec { "xhprof.web.dbpass":
-        command => "sed -i 's/['dbpass'] = 'password'/['dbpass'] = 'root'/' /var/www/xhprof/xhprof_lib/config.php",
-        onlyif => "grep \"['dbpass'] = 'password'\" /var/www/xhprof/xhprof_lib/config.php",
-        require => File['/var/www/xhprof/xhprof_lib/config.php']
-    }
-    exec { "xhprof.web.serializer":
-        command => "sed -i 's/['serializer'] = 'php'/['serializer'] = 'json'/' /var/www/xhprof/xhprof_lib/config.php",
-        onlyif => "grep \"['serializer'] = 'php'\" /var/www/xhprof/xhprof_lib/config.php",
-        require => File['/var/www/xhprof/xhprof_lib/config.php']
     }
     exec { "xhprof.web.database":
         command => 'mysql -uroot -proot -e "create database xhprof; use xhprof; CREATE TABLE \`details\` (\`id\` char(17) NOT NULL, \`url\` varchar(255) default NULL, \`c_url\` varchar(255) default NULL, \`timestamp\` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, \`server name\` varchar(64) default NULL, \`perfdata\` MEDIUMBLOB, \`type\` tinyint(4) default NULL, \`cookie\` BLOB, \`post\` BLOB, \`get\` BLOB, \`pmu\` int(11) unsigned default NULL, \`wt\` int(11) unsigned default NULL, \`cpu\` int(11) unsigned default NULL, \`server_id\` char(3) NOT NULL default \'t11\', \`aggregateCalls_include\` varchar(255) DEFAULT NULL, PRIMARY KEY  (\`id\`), KEY \`url\` (\`url\`), KEY \`c_url\` (\`c_url\`), KEY \`cpu\` (\`cpu\`), KEY \`wt\` (\`wt\`), KEY \`pmu\` (\`pmu\`), KEY \`timestamp\` (\`timestamp\`)) ENGINE=MyISAM DEFAULT CHARSET=utf8;"',
         unless => 'mysql -uroot -proot xhprof -e "exit"',
         require => Exec['set-mysql-password']
+    }
+    exec { "xhprof.fix.strict.errors":
+        command => "sed -i 's/abstract public static function/\\/\\/abstract public static function/' /var/www/xhprof/xhprof_lib/utils/Db/Abstract.php",
+        unless => "grep \"//abstract public static function\" /var/www/xhprof/xhprof_lib/utils/Db/Abstract.php",
+        require => Exec["php.xhprof.download"]
+    }
+    file { "/var/www/xhprof/index.php":
+        content => "<?php header('Location: /xhprof/xhprof_html/');",
+        require => Exec["php.xhprof.download"]
+    }
+    file { "/var/www/xhprof/.htaccess":
+        content => "php_value error_reporting 30719",
+        require => Exec["php.xhprof.download"]
     }
 
     # Install various PEAR packages
