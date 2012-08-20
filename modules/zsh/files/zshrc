@@ -35,6 +35,8 @@ source $ZSH/oh-my-zsh.sh
 
 # Customize to your need/bindings...
 bindkey -e
+bindkey '\e[7~' beginning-of-line
+bindkey '\e[4~' end-of-line
 
 # Environment variables
 export LANG="en_US.UTF-8"
