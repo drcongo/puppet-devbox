@@ -9,8 +9,8 @@ class apache ($hostname) {
     exec { "apache2-change-user" :
         command => "echo 'User vagrant' >> /etc/apache2/httpd.conf",
         unless  => "grep -c 'User vagrant' /etc/apache2/httpd.conf",
-        require => Package["apache"],
-        notify  => Service['apache'],
+        require => Package["apache2"],
+        notify  => Service['apache2'],
     }
 
     # Enable the apache service
