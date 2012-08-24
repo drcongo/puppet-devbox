@@ -20,7 +20,15 @@ class php {
         group => "root",
         source => "puppet:///modules/php/php-web.ini",
         notify => Service["apache2"],
-        require => Package['php5']
+        require => Package['php5'],
+    }
+
+    # Ensure session folder is writable by Vagrant user (under which apache runs)
+    file { "/var/lib/php5/session" :
+        owner  => "root",
+        group  => "vagrant",
+        mode   => 0770,
+        require => Package["php5"],
     }
 
     # Install image magick extension. Upstream has problems, so we have to install

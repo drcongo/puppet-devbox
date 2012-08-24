@@ -5,6 +5,14 @@ class apache ($hostname) {
         require => Exec['apt-get update']
     }
 
+    # Change user / group
+    exec { "apache2-change-user" :
+        command => "echo 'User vagrant' >> /etc/apache2/httpd.conf",
+        unless  => "grep -c 'User vagrant' /etc/apache2/httpd.conf",
+        require => Package["apache"],
+        notify  => Service['apache'],
+    }
+
     # Enable the apache service
     service { "apache2":
         enable => true,
