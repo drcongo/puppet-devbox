@@ -10,8 +10,8 @@ class devbox ($hostname, $gitUser, $gitEmail) {
     include memcached
     include redis
     include postfix
-    include php
     include ruby
+    include php
 
     class { "apache":
         hostname => $hostname
@@ -26,4 +26,5 @@ class devbox ($hostname, $gitUser, $gitEmail) {
     include vim
 
     include phpmyadmin
+    include xhprof
 }
