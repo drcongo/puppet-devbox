@@ -56,7 +56,8 @@ class php {
         require => [Package['php5-cli'], Package['php-pear']],
     }
     exec { "pear auto-discover":
-        command => "pear config-set auto_discover 1",
+        command => "pear config-set auto_discover 1 system",
+        unless => "pear config-get auto_discover system | grep 1",
         require => Exec['pear upgrade'],
     }
     exec { "pear-phpunit":
