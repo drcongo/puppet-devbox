@@ -161,22 +161,4 @@ class php {
         content => "<?php phpinfo();",
         require => Package['apache2']
     }
-
-    # Add the fake sendmail script
-    file { "/usr/local/bin/fake-sendmail":
-        ensure => file,
-        owner => "root",
-        group => "root",
-        mode => "755",
-        source => "puppet:///modules/php/fake-sendmail"
-    }
-
-    # Ensure the mail dump dir exists and is writable
-    file { "/var/www/maildump":
-        ensure => "directory",
-        owner => "www-data",
-        group => "www-data",
-        mode => "777",
-        require => Package['apache2']
-    }
 }
