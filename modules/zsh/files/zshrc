@@ -47,6 +47,11 @@ export SYMFONY_ASSETS_INSTALL="symlink"
 alias phing='nocorrect phing'
 alias cap='nocorrect cap'
 
+# Change directory on login
+if [[ -o login ]]; then
+    cd /vagrant
+fi
+
 # Where the fuck
 wtf()
 {
