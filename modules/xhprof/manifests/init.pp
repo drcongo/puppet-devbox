@@ -51,11 +51,6 @@ class xhprof {
         unless => 'mysql -uroot -proot xhprof -e "exit"',
         require => Exec['set-mysql-password']
     }
-    exec { "xhprof.fix.strict.errors":
-        command => "sed -i 's/abstract public static function/\\/\\/abstract public static function/' /var/www/xhprof/xhprof_lib/utils/Db/Abstract.php",
-        unless => "grep \"//abstract public static function\" /var/www/xhprof/xhprof_lib/utils/Db/Abstract.php",
-        require => Exec["xhprof.download"]
-    }
     file { "/var/www/xhprof/index.php":
         content => "<?php header('Location: /xhprof/xhprof_html/');",
         require => Exec["xhprof.download"]
