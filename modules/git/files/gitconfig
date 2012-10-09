@@ -7,6 +7,7 @@
     br = branch
     st = !sh -c 'echo "" && git diff --stat && echo "" && git status && echo ""'
     lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset' --abbrev-commit --date=relative
+    cl = git branch --merged | grep -v \* | xargs git branch -D
 [merge]
     ff = false
 [color]
