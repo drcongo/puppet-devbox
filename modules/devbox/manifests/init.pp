@@ -21,6 +21,7 @@ class devbox ($hostname, $gitUser, $gitEmail) {
         gitUser => $gitUser,
         gitEmail => $gitEmail
     }
+    include svn
 
     include zsh
     include vim
