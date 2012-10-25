@@ -90,10 +90,4 @@ class php {
         unless => "pear info pear.phing.info/phing",
         require => Exec['pear auto-discover'],
     }
-
-    # Add a phpinfo file to www root
-    file { "/var/www/phpinfo.php":
-        content => "<?php phpinfo();",
-        require => Package['apache2']
-    }
 }
