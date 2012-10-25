@@ -26,6 +26,5 @@ class devbox ($hostname, $gitUser, $gitEmail) {
     include zsh
     include vim
 
-    include phpmyadmin
     include xhprof
 }
