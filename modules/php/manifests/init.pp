@@ -1,6 +1,6 @@
 class php {
     # Install PHP packages
-    $phpPackages = ["php5", "php5-cli", "php5-mysql", "php-pear", "php5-dev", "php-apc", "php5-mcrypt", "php5-gd", "php5-sqlite", "php5-curl", "php5-intl", "php5-xdebug", "php5-memcache"]
+    $phpPackages = ["php5", "php5-cli", "php5-mysql", "php-pear", "php5-dev", "php-apc", "php5-mcrypt", "php5-gd", "php5-sqlite", "php5-curl", "php5-intl", "php5-xdebug", "php5-memcache", "php5-imagick"]
     package { $phpPackages:
         ensure => latest,
         require => [Exec['apt-get update'], Package['apache2']],
@@ -29,25 +29,6 @@ class php {
         group  => "vagrant",
         mode   => 0770,
         require => Package["php5"],
-    }
-
-    # Install image magick extension. Upstream has problems, so we have to install
-    # the package manually.
-    package { "imagemagick":
-        ensure => latest,
-        require => Exec['apt-get update'],
-    }
-    exec { "php.imagick.download":
-        command => "wget https://launchpad.net/~ondrej/+archive/php5/+files/php5-imagick_3.1.0%7Erc1-1%7Eprecise%2B1_amd64.deb -O /tmp/php5-imagick.deb",
-        creates => "/tmp/php5-imagick.deb",
-        unless => "dpkg -l php5-imagick | grep ii",
-        require => Package['php5']
-    }
-    exec { "php.imagick.install":
-        command => "dpkg -i /tmp/php5-imagick.deb",
-        unless => "dpkg -l php5-imagick | grep ii",
-        require => [Package['imagemagick'], Exec["php.imagick.download"]],
-        notify => Service["apache2"]
     }
 
     # Install various PEAR packages
