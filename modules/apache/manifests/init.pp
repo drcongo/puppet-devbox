@@ -54,7 +54,7 @@ class apache ($hostname, $documentroot) {
     }
 
     exec { "apache.project.documentroot":
-	command => "sed -i 's/__DOCUMENTROOT__/$documentroot/g' /etc/apache2/sites-available/010-project",
+        command => "sed -i 's/__DOCUMENTROOT__/$documentroot/g' /etc/apache2/sites-available/010-project",
         onlyif => "grep \"DocumentRoot /vagrant/__DOCUMENTROOT__\" /etc/apache2/sites-available/010-project",
         require => File['/etc/apache2/sites-available/010-project']
     }
