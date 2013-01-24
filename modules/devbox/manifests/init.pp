@@ -1,5 +1,5 @@
 # Main module
-class devbox ($hostname, $gitUser, $gitEmail) {
+class devbox ($hostname, $documentroot, $gitUser, $gitEmail) {
     # Set paths
     Exec {
         path => ["/usr/bin", "/bin", "/usr/sbin", "/sbin", "/usr/local/bin", "/usr/local/sbin"]
@@ -14,7 +14,8 @@ class devbox ($hostname, $gitUser, $gitEmail) {
     include php
 
     class { "apache":
-        hostname => $hostname
+        hostname => $hostname,
+        documentroot => $documentroot
     }
 
     class { "git":
