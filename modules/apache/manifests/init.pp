@@ -60,8 +60,9 @@ class apache ($hostname, $documentroot) {
     }
 
     exec { "apache.enable.virtualhosts":
-        command => "/usr/sbin/a2dissite 000-default && /usr/sbin/a2ensite 010-project && /etc/init.d/apache2 reload",
+        command => "/usr/sbin/a2dissite 000-default && /usr/sbin/a2ensite 010-project",
         require => File['/etc/apache2/sites-available/010-project'],
+        notify  => Service["apache2"]
     }
 
     # Remove the default index file
