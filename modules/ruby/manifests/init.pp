@@ -17,6 +17,11 @@ class ruby {
         unless => "gem list | grep capistrano 2>/dev/null",
         require => Package['ruby1.9.1']
     }
+    exec { "gem.railsless-deploy":
+        command => "gem install railsless-deploy",
+        unless => "gem list | grep railsless-deploy 2>/dev/null",
+        require => Exec['gem.capistrano']
+    }
     exec { "gem.compass":
         command => "gem install compass",
         unless => "gem list | grep compass 2>/dev/null",
