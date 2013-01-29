@@ -4,7 +4,7 @@ Devbox Puppet Config
 This is my personal puppet configuration which I use with vagrant to setup my development box.
 
 It installs the following:
-* PHP 5.4
+* PHP 5.3
 * Apache 2.2
 * MySQL 5.5
 * Memcache 3.0
