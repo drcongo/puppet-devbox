@@ -5,26 +5,30 @@ class ruby {
         require => Exec['apt-get update']
     }
 
-    # Update gems
-    exec { "gem update":
-        command => "gem update",
-        require => Package['ruby1.9.1'],
+    # Ensure we can install gems
+    package { 'rubygems':
+        ensure => 'latest'
     }
 
-    # Install some useful gems
-    exec { "gem.capistrano":
-        command => "gem install capistrano",
-        unless => "gem list | grep capistrano 2>/dev/null",
-        require => Package['ruby1.9.1']
+    # Install gems
+    package { 'compass':
+        provider => 'gem',
+        ensure => 'latest'
     }
-    exec { "gem.railsless-deploy":
-        command => "gem install railsless-deploy",
-        unless => "gem list | grep railsless-deploy 2>/dev/null",
-        require => Exec['gem.capistrano']
+    package { 'susy':
+        provider => 'gem',
+        ensure => 'latest'
     }
-    exec { "gem.compass":
-        command => "gem install compass",
-        unless => "gem list | grep compass 2>/dev/null",
-        require => Package['ruby1.9.1']
+    package { 'sass-globbing':
+        provider => 'gem',
+        ensure => 'latest'
+    }
+    package { 'capistrano':
+        provider => 'gem',
+        ensure => 'latest'
+    }
+    package { 'railsless-deploy':
+        provider => 'gem',
+        ensure => 'latest'
     }
 }
