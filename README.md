@@ -1,3 +1,20 @@
+
+Added pear as a submodule from https://github.com/rafaelfelix/puppet-pear
+Added MongoDB as a submodule from https://github.com/puppetlabs/puppetlabs-mongodb
+Added apt as a submodule from https://github.com/puppetlabs/puppetlabs-apt
+Added stdlib as a submodule from https://github.com/puppetlabs/puppetlabs-stdlib
+
+Installed via pecl / pear
+
+* mongo
+* memcache
+
+
+
+
+
+#Original README#
+
 Devbox Puppet Config
 ====================
 

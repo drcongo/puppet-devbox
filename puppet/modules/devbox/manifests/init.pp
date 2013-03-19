@@ -12,10 +12,29 @@ class devbox ($hostname, $documentroot, $gitUser, $gitEmail) {
     include postfix
     include ruby
     include php
+    include pear
+
+    class {'mongodb':
+      enable_10gen => true,
+    }
 
     class { "apache":
         hostname => $hostname,
         documentroot => $documentroot
+    }
+
+    exec { 'pecl-mongo-install':
+        command => 'pecl install mongo',
+        unless => "pecl info mongo",
+        notify => Service['apache2'],
+        require => Package['php-pear'],
+    }
+
+    exec { 'pecl-memcache-install':
+        command => 'pecl install memcache',
+        unless => "pecl info memcache",
+        notify => Service['apache2'],
+        require => Package['php-pear'],
     }
 
     class { "git":
